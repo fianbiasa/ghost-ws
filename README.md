@@ -1,7 +1,8 @@
 # Ghost Web Scanner
 
 Scanner keamanan web berbasis heuristic untuk recon dan audit awal keamanan aplikasi web.
-**Fork dan Rebuild dari : https://github.com/Sneijderlino/Ghost-Web_Scanner**
+
+**Fork dan Rebuild (Penyempurnaan) dari : https://github.com/Sneijderlino/Ghost-Web_Scanner**
 
 ## Ringkasan
 Ghost Web Scanner (file utama: `gws.py`) membantu melakukan pemeriksaan awal terhadap target web, termasuk:
