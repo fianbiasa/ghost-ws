@@ -1,194 +1,181 @@
-<!-- ==================== BANNER ==================== -->
-<h1 align="center">💀 Ghost Web Scanner</h1>
-<h3 align="center">Tool Recon & Security Scan Web dengan aura Hacker Dark-Red</h3>
-<p align="center">
-  <img src="img/1.png" alt="Ghost Web Scanner Preview" width="100%" style="border-radius:12px; box-shadow:0 0 25px #ff0000;">
-</p>
+# Ghost Web Scanner
 
----
+Scanner keamanan web berbasis heuristic untuk recon dan audit awal keamanan aplikasi web.
 
-## 📋 Daftar Isi
+## Ringkasan
+Ghost Web Scanner (file utama: `gws.py`) membantu melakukan pemeriksaan awal terhadap target web, termasuk:
+- Recon dasar target
+- Audit header dan cookie security
+- CORS check
+- HTTP method exposure check
+- TLS certificate check
+- Well-known endpoint check
+- Form audit (GET login, indikasi CSRF)
+- Parameter indicator (SQLi/XSS berbasis heuristic)
+- Output laporan JSON dan SARIF
 
-- [Tentang](#-tentang)
-- [Fitur](#-fitur)
-- [Preview](#-preview)
-- [Instalasi](#-instalasi)
-  - [Windows](#-windows)
-  - [Kali Linux / Ubuntu](#-kali-linux--ubuntu)
-  - [Termux](#-termux)
-- [Penggunaan](#-penggunaan)
-- [Persyaratan](#-persyaratan)
-- [Kontribusi](#-kontribusi)
-- [Lisensi](#-lisensi)
-- [Disclaimer](#-disclaimer)
+Penting: hasil scanner adalah indikator awal, bukan bukti exploitability final.
 
----
+## Rebranding
+- Nama tool: Ghost Web Scanner
+- File utama: `gws.py`
+- Author: Zulfianto
+- GitHub: https://github.com/fianbiasa/ghost-ws
 
-## 👻 Tentang
+## Fitur Saat Ini
+- 3 mode scan:
+  - `cepat`
+  - `normal`
+  - `agresif`
+- Retry + exponential backoff + concurrency control
+- Severity filter untuk export report
+- Export report:
+  - JSON
+  - SARIF (untuk tooling security/devops)
 
-`Ghost-Web-Scanner` adalah skrip Python untuk scan keamanan web dan intel pengumpulan informasi otomatis, hasil rancangan `Sneijderlino`.
+## Requirement
+### Minimum Sistem
+- Python 3.10+
+- Linux / Termux / environment POSIX direkomendasikan
 
+### Python Dependencies
+Lihat file `requirements.txt`:
+- `requests`
+- `beautifulsoup4`
+- `urllib3`
 
-
-> ⚠️ Hanya untuk edukasi, pengujian keamanan dan riset (ethical hacking). Jangan gunakan tanpa izin pemilik target.
-
----
-
-## 🔥 Fitur
-
-- Mendukung mode multi-platform: Windows, Kali Linux, Termux
-- Auto recon: subdomain enumeration, header web server, firewall WAF basic
-- Directory brute-force dari path populer (`admin`, `login`, `.env`, `wp-admin`, dll.)
-- Form scanner: deteksi login form, CSRF, method GET vs POST
-- Param scan: cek XSS & SQLi sederhana menggunakan payload uji
-- Laporan akhir: summary target, proteksi, tech stack, score kerentanan
-- UI terminal yang keren dan hacker-looking
-
----
-
-## 🖼️ Preview
-
-<p align="center">
-  <img src="img/2.png" alt="Ghost Web Scanner Screenshot" width="80%" style="border-radius:12px; box-shadow: 0 0 30px #ff0000;" />
-</p>
-
-
-<p align="center">
-  <img src="img/3.png" alt="Ghost Web Scanner Screenshot" width="80%" style="border-radius:12px; box-shadow: 0 0 30px #ff0000;" />
-</p>
-
-
-<p align="center">
-  <img src="img/5.png" alt="Ghost Web Scanner Screenshot" width="80%" style="border-radius:12px; box-shadow: 0 0 30px #ff0000;" />
-</p>
-
-<p align="center">
-  <img src="img/4.png" alt="Ghost Web Scanner Screenshot" width="80%" style="border-radius:12px; box-shadow: 0 0 30px #ff0000;" />
-</p>
----
-
-## 🛠️ Instalasi
-
-### 🔧 Windows
-
-1. Install Python 3.11+ dari https://www.python.org/downloads/ (pastikan centang `Add Python to PATH`).
-2. Install Git: https://git-scm.com/downloads.
-3. Buka Git Bash atau PowerShell.
-4. Clone repo:
-   ```bash
-   git clone https://github.com/Sneijderlino/Ghost-Web_Scanner.git
-   cd Ghost-Web-scanner
-   ```
-5. Install dependencies:
-   ```bash
-   python -m pip install -r requirements.txt
-   ```
-6. Jalankan:
-   ```bash
-   python Ghost-Web-Scanner.py
-   ```
-
-Catatan: di Windows, fitur beberapa deteksi tambahan Termux/Kali tidak tersedia (seperti `termux-battery-status`).
-
-### 🔧 Kali Linux / Ubuntu
-
-1. Buka terminal.
-2. Clone repo:
-   ```bash
-   git clone https://github.com/Sneijderlino/Ghost-Web_Scanner.git
-   cd Ghost-Web-scanner
-   ```
-3. Install Python & modul:
-   ```bash
-   sudo apt update && sudo apt install -y python3 python3-pip git
-   python3 -m pip install --upgrade pip
-   python3 -m pip install -r requirements.txt
-   ```
-4. Jalankan:
-   ```bash
-   python3 Ghost-Web-Scanner.py
-   ```
-
-### 📱 Termux (Android)
-
-1. Install Termux dari F-Droid.
-2. Update & upgrade:
-   ```bash
-   pkg update && pkg upgrade -y
-   ```
-3. Install tools dasar:
-   ```bash
-   pkg install -y python git clang make openssl-tool
-   ```
-4. Clone repo:
-   ```bash
-   git clone https://github.com/Sneijderlino/Ghost-Web_Scanner.git
-   cd Ghost-Web-scanner
-   ```
-5. Install dependencies Python:
-   ```bash
-   pip install --upgrade pip
-   pip install -r requirements.txt
-   ```
-6. Jalankan versi terminal:
-   ```bash
-   python Ghost-Web-Scanner.py
-   ```
-
-> ⚠️ Di Termux, beberapa fitur khusus (misal API khusus Android atau perangkat keras) bisa terbatas.
-
----
-
-## ▶️ Penggunaan
-
-1. Jalankan script seperti di atas.
-2. Masukkan target URL (contoh `example.com` atau `http://example.com`).
-3. Biarkan proses berjalan sampai selesai.
-4. Baca output: subdomain ditemukan, path kuat, form dan potensi XSS / SQLi.
-
-Contoh:
-
+## Instalasi
+## 1) Clone Repository
 ```bash
-python Ghost-Web-Scanner.py
-# lalu masukkan target
+git clone https://github.com/fianbiasa/ghost-ws.git
+cd ghost-ws
 ```
 
----
+## 2) Setup Virtual Environment (Direkomendasikan)
+### Ubuntu / Debian / Kali
+```bash
+sudo apt update
+sudo apt install -y python3 python3-pip python3-venv
 
-## ✅ Persyaratan
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip setuptools wheel
+python -m pip install -r requirements.txt
+```
 
-- Python 3.11+
-- requests
-- beautifulsoup4
-- urllib3
+Jika muncul error `ensurepip is not available`, install paket venv versi Python kamu, contoh:
+```bash
+sudo apt install -y python3.10-venv
+```
 
-File `requirements.txt` berisi paket-paket di atas.
+### Termux
+```bash
+pkg update -y && pkg upgrade -y
+pkg install -y python git
 
----
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip setuptools wheel
+python -m pip install -r requirements.txt
+```
 
-## 🤝 Kontribusi
+## 3) Jalankan Scanner
+### Interaktif
+```bash
+python gws.py
+```
+Scanner akan meminta:
+- Target URL
+- Mode scan (`cepat/normal/agresif`)
 
-1. Fork repo
-2. Buat branch baru (`git checkout -b feature/nama-fitur`)
-3. Commit perubahan (`git commit -m "Tambah fitur X"`)
-4. Push (`git push origin feature/nama-fitur`)
-5. Buka Pull Request
+### Non-Interaktif (CLI)
+```bash
+python gws.py --target https://example.com --mode normal --min-severity LOW
+```
 
-Lihat `CONTRIBUTING.md` untuk detail.
+## Opsi CLI Lengkap
+```bash
+python gws.py \
+  --target https://target.com \
+  --mode normal \
+  --min-severity MEDIUM \
+  --insecure
+```
 
----
+Opsi:
+- `--target`: URL target
+- `--mode`: `cepat`, `normal`, `agresif`
+- `--min-severity`: `INFO`, `LOW`, `MEDIUM`, `HIGH`, `CRITICAL`
+- `--insecure`: nonaktifkan verifikasi TLS (hanya untuk testing/troubleshooting)
 
-## 📝 Lisensi
+## Cara Install Ulang Cepat (Jika Environment Rusak)
+```bash
+rm -rf .venv
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip setuptools wheel
+python -m pip install -r requirements.txt
+```
 
-`Ghost-Web-Scanner` dilisensikan di bawah MIT License. Lihat file `LICENSE`.
+## Output Laporan
+Setiap scan menghasilkan file di folder `reports/`:
+- `scan_<domain>_<timestamp>.json`
+- `scan_<domain>_<timestamp>.sarif`
 
----
+### Isi JSON (ringkas)
+- Metadata target
+- Konfigurasi scan
+- Risk summary
+- Findings (severity/confidence/evidence)
+- Endpoint notes
+- Request warnings
 
-## ⚠️ Disclaimer
+### Isi SARIF
+Kompatibel untuk integrasi ke security tooling yang mendukung format SARIF 2.1.0.
 
-Proyek ini hanya untuk edukasi dan penelitian keamanan etis. Penulis tidak bertanggung jawab atas penyalahgunaan. Pastikan Anda memiliki izin sebelum melakukan scanning pada sistem/website pihak ketiga.
+## Metodologi Pengecekan
+Scanner melakukan pemeriksaan terhadap:
+- Target intelligence
+- Security headers
+- Cookie flags
+- CORS policy
+- Exposed HTTP methods
+- TLS certificate/protocol/cipher
+- Well-known endpoint exposure
+- Form weakness indicators
+- SQLi/XSS indicators via payload comparison
 
----
+## Troubleshooting
+## 1) `source .venv/bin/activate: No such file or directory`
+Penyebab: venv gagal dibuat. Solusi:
+```bash
+sudo apt install -y python3-venv
+python3 -m venv .venv
+```
 
-<p align="center">⚡ Ghost Web Scanner - Stay safe, stay ethical ⚡</p>
-# Ghost-Web_Scanner
+## 2) SSL verify gagal (`CERTIFICATE_VERIFY_FAILED`)
+Opsi:
+- Perbaiki CA bundle sistem
+- Atau sementara gunakan `--insecure` untuk testing
+
+## 3) PIP warning invalid distribution
+Jika ada folder aneh seperti `~setuptools` di `.venv`, hapus folder tersebut lalu install ulang dependencies.
+
+## 4) Scan terasa lambat
+Gunakan mode `cepat`:
+```bash
+python gws.py --target https://target.com --mode cepat
+```
+
+## Disclaimer
+Tool ini untuk audit keamanan yang sah dan berizin.
+Jangan melakukan scanning tanpa izin tertulis dari pemilik sistem.
+
+Author tidak bertanggung jawab atas penyalahgunaan.
+
+## Kontribusi
+Pull request dan issue sangat diterima.
+Silakan lihat `CONTRIBUTING.md` untuk alur kontribusi.
+
+## Lisensi
+Project ini menggunakan lisensi MIT. Lihat file `LICENSE`.

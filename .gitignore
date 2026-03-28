@@ -3,7 +3,9 @@ __pycache__/
 *.log
 .env
 venv/
+.venv/
 .env.*
 .idea/
 .vscode/
+reports/
 Thumbs.db
